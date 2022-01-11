@@ -1,0 +1,34 @@
+@api = http://localhost:3000/orders
+@apiT = http://localhost:3000/tables
+
+@apiD = http://localhost:3000/dishes
+
+@apiE = http://localhost:3000/extras
+
+### Get all orders
+{{api}}
+
+### create a new order
+POST {{api}}
+Content-Type: application/json
+
+{
+  "table": "1",
+  "user": "1",
+  "note": "Sin huevo",
+  "extras": [1],
+  "dishes":[1]
+}
+
+### get a single order
+{{apiT}}/2
+
+### delete a single order
+DELETE {{api}}/4
+
+### update order
+PUT {{api}}/5
+Content-Type: application/json
+
+{
+}
