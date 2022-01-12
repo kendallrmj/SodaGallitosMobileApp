@@ -33,7 +33,28 @@ export const saveOrder = async (req, res) => {
         .input('pResponsableCreacion', sql.Int, req.body.user)
         .input('pNota', sql.NVarChar, req.body.note)
         .execute('addOrder')        
+/*
+    var idDishes = [1]
+    var idExtras = [1]
+    var dishes = new sql.Table();
+    var extras = new sql.Table();
+    dishes.columns.add('IdElement', sql.Int);  
+    extras.columns.add('IdElement', sql.Int);
+    idDishes.forEach(function(element, index, array) {
+      dishes.rows.add(element);
+    })
+    idExtras.forEach(function(element, index, array) {
+      extras.rows.add(element);
+    })
+    var idOrder=orderResult.recordset[0].Id
+    await pool.request()
+        .input('pExtraList',  extras)
+        .input('pDishList', dishes)
+        .input('pIdOrder', sql.Int, idOrder)
+        .execute('addDishAndExtraPerOrder')
     
+    //
+*/    
     return res.send(200)
   }catch (err) {
     console.log("Create order error: ", err)
@@ -88,25 +109,3 @@ export const getExtras = async (req, res) => {
 };
 
 
-/*
-    var idDishes = [1]
-    var idExtras = [1]
-    var dishes = new sql.Table();
-    var extras = new sql.Table();
-    dishes.columns.add('IdElement', sql.Int);  
-    extras.columns.add('IdElement', sql.Int);
-    idDishes.forEach(function(element, index, array) {
-      dishes.rows.add(element);
-    })
-    idExtras.forEach(function(element, index, array) {
-      extras.rows.add(element);
-    })
-    var idOrder=orderResult.recordset[0].Id
-    await pool.request()
-        .input('pExtraList',  extras)
-        .input('pDishList', dishes)
-        .input('pIdOrder', sql.Int, idOrder)
-        .execute('addDishAndExtraPerOrder')
-    
-    //
-*/

@@ -16,6 +16,7 @@ export const saveOrder = async (newOrder) => {
   return await res.json();
 };
 
+
 export const deleteOrder = async (id) => {
   await fetch(`${API_O}/${id}`, {
     method: "DELETE",

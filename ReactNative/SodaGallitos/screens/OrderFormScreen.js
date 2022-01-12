@@ -18,6 +18,7 @@ const OrderFormScreen = ({ navigation, route }) => {
 
   const [selectedTable, setSelectedTable] = useState({})
   const [selectedDishes, setSelectedDishes] = useState([])
+  const [selectedExtras, setSelectedExtras] = useState([])  
   const k_tables = [
     {
       item: 'Mesa #1',
@@ -39,6 +40,20 @@ const OrderFormScreen = ({ navigation, route }) => {
       item: 'Mesa Exterior',
       id: '5',
     }        
+  ]
+  const k_extras = [
+    {
+      item: 'Papas fritas',
+      id: '1',
+    },
+    {
+      item: 'Ensalada',
+      id: '2',
+    },
+    {
+      item: 'Patacones',
+      id: '3',
+    }
   ]
 
   const k_dishes = [
@@ -70,7 +85,9 @@ const OrderFormScreen = ({ navigation, route }) => {
   function onMultiChange() {
     return (item) => setSelectedDishes(xorBy(selectedDishes, [item], 'id'))
   }
-
+  function onMultiChange2() {
+    return (item) => setSelectedExtras(xorBy(selectedExtras, [item], 'id'))
+  }
   function onChange() {
     return (val) => setSelectedTable(val)
 
@@ -108,7 +125,27 @@ const OrderFormScreen = ({ navigation, route }) => {
         isMulti
       />      
       
-
+      <SelectBox
+        inputPlaceholder=" "
+        label="Seleccione los adicionales"
+        labelStyle={{fontWeight: 'bold', color: "#576574",fontSize:18,textAlign:"center"}}
+        containerStyle={{width: '90%', height: 40, margin: 20}}
+        options={k_extras}
+        selectedValues={selectedExtras}
+        onMultiSelect={onMultiChange2()}
+        onTapClose={onMultiChange2()}
+        arrowIconColor="white"
+        searchIconColor="white"
+        toggleIconColor="white"        
+        isMulti
+      />      
+      <TextInput
+        style={styles.input}
+        placeholder="Nota"
+        placeholderTextColor="#576574"
+        value={order.nota}
+        onChangeText={(text) => handleChange("nota", text)}
+      />
 
       <TouchableOpacity style={styles.buttonSave} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Nueva Orden</Text>
@@ -145,8 +182,8 @@ const styles = StyleSheet.create({
     marginBottom: 7,
     fontSize: 14,
     borderWidth: 1,
-    borderColor: "#10ac84",
-    height: 30,
+    borderColor: "maroon",
+    height: 70,
     color: "#ffffff",
     textAlign: "center",
     padding: 4,
