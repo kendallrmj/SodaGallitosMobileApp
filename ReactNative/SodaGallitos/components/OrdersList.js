@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FlatList, SafeAreaView, Alert, RefreshControl } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { deleteOrder, getOrders } from "../api";
 import OrderItem from "./OrderItem";
@@ -13,7 +14,8 @@ const OrdersList = ({ navigation }) => {
   const loadOrders = async () => {
     try {
       console.log("loadOrders");
-      const orders = await getOrders();
+      const user = await AsyncStorage.getItem('@id');      
+      const orders = await getOrders(user);
       setOrders(orders);
     } catch (error) {
       console.log(error);

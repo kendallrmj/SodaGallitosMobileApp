@@ -57,14 +57,15 @@ const OrderFormScreen = ({ navigation, route }) => {
   const [editing] = useState(false);
 
 
-  function addExtras(item) {
-    order.extras.push(item.Id);
-  }
-  function addDishes(item) {
-    order.dishes.push(item.Id);
-  }
+
 
   const handleSubmit = async () => {
+    function addExtras(item) {
+      order.extras.push(item.Id);
+    }
+    function addDishes(item) {
+      order.dishes.push(item.Id);
+    }
     try {
       order.table=selectedTable.id.toString();
       selectedDishes.forEach(addDishes);

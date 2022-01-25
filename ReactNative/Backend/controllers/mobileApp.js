@@ -6,7 +6,9 @@ import sql from "mssql/msnodesqlv8.js";
 export const getOrders = async (req, res) => {
   try {
     let pool = await sql.connect(config);
-    let results = await pool.request().execute('getOrders')
+    let results = await pool.request()
+      .input('pIdUser', sql.Int, req.params.id)
+      .execute('GetOrders')
     let rows=results.recordset
     return res.json(rows)
   }catch (err) {

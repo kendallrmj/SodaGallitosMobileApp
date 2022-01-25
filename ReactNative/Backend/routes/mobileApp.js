@@ -14,7 +14,7 @@ import {
 const router = Router();
 
 //orders
-router.get("/orders", getOrders);
+router.get("/orders/:id", getOrders);
 router.post("/orders", saveOrder);
 router.delete("/orders/:id", deleteOrder)
 //tables

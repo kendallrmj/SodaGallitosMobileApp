@@ -24,8 +24,8 @@ export const deleteOrder = async (id) => {
   });
 };
 
-export const getOrders = async () => {
-  const res = await fetch(API_O, {
+export const getOrders = async (id) => {
+  const res = await fetch(`${API_O}/${id}`, {
     method: "GET",
   });
   return await res.json();
