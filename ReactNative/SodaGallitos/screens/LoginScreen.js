@@ -1,25 +1,43 @@
 import React, { useState } from 'react'
-import { StyleSheet } from 'react-native'
-import Background from '../components/Background'
+import { StyleSheet, View } from 'react-native'
 import Logo from '../components/Logo'
 import Header from '../components/Header'
 import Button from '../components/Button'
 import TextInput from '../components/TextInput'
 import { theme } from '../core/theme'
-import { emailValidator } from '../helpers/emailValidator'
+import { userValidator } from '../helpers/userValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
+import { login } from "../api";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState({ value: '', error: '' })
+  const [username, setUsername] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
 
-  const onLoginPressed = () => {
-    const emailError = emailValidator(email.value)
+  const onLoginPressed = async () => {
+    const emailError = userValidator(username.value)
     const passwordError = passwordValidator(password.value)
     if (emailError || passwordError) {
-      setEmail({ ...email, error: emailError })
+      setUsername({ ...username, error: emailError })
       setPassword({ ...password, error: passwordError })
       return
+    } 
+    const data={
+      username: username.value,
+      password: password.value      
+    }
+    try{
+      const result = await login(data)      
+      if (result[0].id == -1){
+        setUsername({ ...username, error: "Usuario incorrecto" })
+        setPassword({ ...password, error: "Contraseña incorrecta" })
+        return
+      }
+      await AsyncStorage.setItem('@id',result[0].id.toString())
+    }
+    catch (error) {
+      console.log(error);
     }
     navigation.reset({
       index: 0,
@@ -28,23 +46,20 @@ export default function LoginScreen({ navigation }) {
   }
 
   return (
-    <Background>
+      <View style={styles.container}>
       <Logo />
       <Header>Bienvenido</Header>
       <TextInput
-        label="Email"
+        label="Nombre de usuario"
         returnKeyType="next"
-        value={email.value}
-        onChangeText={(text) => setEmail({ value: text, error: '' })}
-        error={!!email.error}
-        errorText={email.error}
+        value={username.value}
+        onChangeText={(text) => setUsername({ value: text, error: '' })}
+        error={!!username.error}
+        errorText={username.error}
         autoCapitalize="none"
-        autoCompleteType="email"
-        textContentType="emailAddress"
-        keyboardType="email-address"
       />
       <TextInput
-        label="Password"
+        label="Contraseña"
         returnKeyType="done"
         value={password.value}
         onChangeText={(text) => setPassword({ value: text, error: '' })}
@@ -53,28 +68,21 @@ export default function LoginScreen({ navigation }) {
         secureTextEntry
       />
       <Button mode="contained" onPress={onLoginPressed}>
-        Login
+        Iniciar Sesion
       </Button>
-    </Background>
+      </View>
   )
 }
 
 const styles = StyleSheet.create({
-  forgotPassword: {
+  container: {
+    flex: 1,
+    padding: 20,
     width: '100%',
-    alignItems: 'flex-end',
-    marginBottom: 24,
-  },
-  row: {
-    flexDirection: 'row',
-    marginTop: 4,
-  },
-  forgot: {
-    fontSize: 13,
-    color: theme.colors.secondary,
-  },
-  link: {
-    fontWeight: 'bold',
-    color: theme.colors.primary,
+    maxWidth: 395,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.primary,
   },
 })

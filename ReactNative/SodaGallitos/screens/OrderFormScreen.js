@@ -1,78 +1,75 @@
 import React, { useEffect, useState } from "react";
-import { TextInput, TouchableOpacity, Text, StyleSheet } from "react-native";
-import { saveOrder } from "../api";
+import {  StyleSheet } from "react-native";
+import { saveOrder,getTables, getDishes, getExtras } from "../api";
+import { useIsFocused } from "@react-navigation/native";
 import Layout from "../components/Layout";
 import SelectBox from 'react-native-multi-selectbox';
 import { xorBy } from 'lodash'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Button from '../components/Button'
+import { theme } from '../core/theme'
+import TextInput from '../components/TextInput'
 
-
-  
 const OrderFormScreen = ({ navigation, route }) => {
-  const [order, setOrder] = useState({
-    mesa: "",
-    platillos: "",
-    adicionales: "",
-    nota: "",
-  });
-  const [editing] = useState(false);
-
+  const [tables, setTables] = useState([]);  
+  const [dishes, setDishes] = useState([]);  
+  const [extras, setExtras] = useState([]);      
+  const isFocused = useIsFocused();
+  const loadTables = async () => {
+    try {
+      console.log("getTables");
+      const tables = await getTables();
+      setTables(tables);
+    } catch (error) {
+      console.log(error);
+    }
+  };  
+  const loadDishes = async () => {
+    try {
+      console.log("getDishes");
+      const dishes = await getDishes();
+      setDishes(dishes);
+    } catch (error) {
+      console.log(error);
+    }
+  };  
+  const loadExtras = async () => {
+    try {
+      console.log("getExtras");
+      const extras = await getExtras();
+      setExtras(extras);
+    } catch (error) {
+      console.log(error);
+    }
+  };    
   const [selectedTable, setSelectedTable] = useState({})
   const [selectedDishes, setSelectedDishes] = useState([])
   const [selectedExtras, setSelectedExtras] = useState([])  
-  const k_tables = [
-    {
-      item: 'Mesa #1',
-      id: '1',
-    },
-    {
-      item: 'Mesa #2',
-      id: '2',
-    },
-    {
-      item: 'Mesa #3',
-      id: '3',
-    },
-    {
-      item: 'Mesa #4',
-      id: '4',
-    },
-    {
-      item: 'Mesa Exterior',
-      id: '5',
-    }        
-  ]
-  const k_extras = [
-    {
-      item: 'Papas fritas',
-      id: '1',
-    },
-    {
-      item: 'Ensalada',
-      id: '2',
-    },
-    {
-      item: 'Patacones',
-      id: '3',
-    }
-  ]
 
-  const k_dishes = [
-    {
-      item: 'Arroz con pollo',
-      id: '1',
-    },
-    {
-      item: 'Gallo Pinto',
-      id: '2',
-    },
-    {
-      item: 'Ceviche',
-      id: '3',
-    }
-  ]
+  const [order, setOrder] = useState({
+    table: "",
+    user: "",
+    note: "",
+    extras: [],
+    dishes: []
+  });
+
+  const [editing] = useState(false);
+
+
+  function addExtras(item) {
+    order.extras.push(item.Id);
+  }
+  function addDishes(item) {
+    order.dishes.push(item.Id);
+  }
 
   const handleSubmit = async () => {
     try {
+      order.table=selectedTable.id.toString();
+      selectedDishes.forEach(addDishes);
+      selectedExtras.forEach(addExtras);
+      order.user = await AsyncStorage.getItem('@id');
       await saveOrder(order);
       navigation.navigate("HomeScreen");
     } catch (error) {
@@ -82,16 +79,22 @@ const OrderFormScreen = ({ navigation, route }) => {
 
   const handleChange = (name, value) => setOrder({ ...order, [name]: value });
 
-  function onMultiChange() {
-    return (item) => setSelectedDishes(xorBy(selectedDishes, [item], 'id'))
+  function onMultiChangeDishes() {
+    return (item) => setSelectedDishes(xorBy(selectedDishes, [item], 'Id'))
   }
-  function onMultiChange2() {
-    return (item) => setSelectedExtras(xorBy(selectedExtras, [item], 'id'))
+  function onMultiChangeExtras() {
+    return (item) => setSelectedExtras(xorBy(selectedExtras, [item], 'Id'))
   }
-  function onChange() {
+  function onChangeTable() {   
     return (val) => setSelectedTable(val)
-
   }
+
+  useEffect(() => {
+    loadTables();
+    loadDishes();
+    loadExtras();
+    console.log("load");
+  }, [isFocused]);
 
   return (
     <Layout>
@@ -99,117 +102,98 @@ const OrderFormScreen = ({ navigation, route }) => {
       <SelectBox
         inputPlaceholder=" "
         label="Seleccione la mesa"
-        labelStyle={{fontWeight: 'bold', color: "#576574",fontSize:18,textAlign:"center"}}                
-        containerStyle={{width: '90%', height: 40, margin: 20}}
-        options={k_tables}
+        labelStyle={{fontWeight: 'bold', color: theme.colors.secondary,fontSize:18,textAlign:"center"}}
+        containerStyle={styles.container}
+        optionContainerStyle={styles.container}
+        optionsLabelStyle={styles.text}
+        inputFilterContainerStyle={styles.container}
+        inputFilterStyle={styles.text}
+        selectedItemStyle={styles.text}
+        arrowIconColor={theme.colors.secondary}
+        searchIconColor={theme.colors.secondary}
+        options={tables}
         value={selectedTable}
-        onChange={onChange()}
+        onChange={onChangeTable()}        
         hideInputFilter={false}
-        arrowIconColor="white"
-        searchIconColor="white"
-        toggleIconColor="white"        
       />
 
       <SelectBox
         inputPlaceholder=" "
         label="Seleccione los platillos"
-        labelStyle={{fontWeight: 'bold', color: "#576574",fontSize:18,textAlign:"center"}}                
-        containerStyle={{width: '90%', height: 40, margin: 20}}        
-        options={k_dishes}
+        labelStyle={{fontWeight: 'bold', color: theme.colors.secondary,fontSize:18,textAlign:"center"}}
+        containerStyle={styles.container}
+
+        optionContainerStyle={styles.container}
+        optionsLabelStyle={styles.text}        
+        multiOptionsLabelStyle = {styles.multitext}
+        multiOptionContainerStyle	={styles.multicontainer}
+        
+        inputFilterContainerStyle={styles.container}
+        inputFilterStyle={styles.text}        
+        options={dishes}
         selectedValues={selectedDishes}
-        onMultiSelect={onMultiChange()}
-        onTapClose={onMultiChange()}
-        arrowIconColor="white"
-        searchIconColor="white"
-        toggleIconColor="white"        
+        onMultiSelect={onMultiChangeDishes()}
+        onTapClose={onMultiChangeDishes()}
+        arrowIconColor={theme.colors.secondary}
+        searchIconColor={theme.colors.secondary}
+        toggleIconColor={theme.colors.secondary}
         isMulti
       />      
       
       <SelectBox
         inputPlaceholder=" "
         label="Seleccione los adicionales"
-        labelStyle={{fontWeight: 'bold', color: "#576574",fontSize:18,textAlign:"center"}}
-        containerStyle={{width: '90%', height: 40, margin: 20}}
-        options={k_extras}
-        selectedValues={selectedExtras}
-        onMultiSelect={onMultiChange2()}
-        onTapClose={onMultiChange2()}
-        arrowIconColor="white"
-        searchIconColor="white"
-        toggleIconColor="white"        
+        labelStyle={{fontWeight: 'bold', color: theme.colors.secondary,fontSize:18,textAlign:"center"}}
+        containerStyle={styles.container}
+        optionContainerStyle={styles.container}
+        optionsLabelStyle={styles.text}        
+        multiOptionsLabelStyle = {styles.multitext}
+        multiOptionContainerStyle	={styles.multicontainer}
+        inputFilterContainerStyle={styles.container}
+        inputFilterStyle={styles.text}
+        options={extras}
+        selectedValues={selectedExtras}        
+        onMultiSelect={onMultiChangeExtras()}
+        onTapClose={onMultiChangeExtras()}
+        arrowIconColor={theme.colors.secondary}
+        searchIconColor={theme.colors.secondary}
+        toggleIconColor={theme.colors.secondary}
         isMulti
       />      
       <TextInput
-        style={styles.input}
-        placeholder="Nota"
-        placeholderTextColor="#576574"
-        value={order.nota}
-        onChangeText={(text) => handleChange("nota", text)}
+        label="Nota"
+        returnKeyType="done"
+        value={order.note}
+        onChangeText={(text) => handleChange("note", text)}
       />
 
-      <TouchableOpacity style={styles.buttonSave} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Nueva Orden</Text>
-      </TouchableOpacity>
+      <Button mode="contained" onPress={handleSubmit}>
+        Nueva Orden
+      </Button>
     </Layout>
   );
 };
 
 
-/*
-      <DropDownPicker
-        placeholder="Seleccione la mesa"        
-        placeholderStyle={{fontWeight: 'bold', color: "#576574"}}        
-        activeItemStyle={{alignItems: 'center'}}
-        style={{backgroundColor: '#222f3e',borderColor: "#10ac84"}}
-        containerStyle={{width: '90%', height: 30, margin: 20}}        
-                
-        open={openT}
-        value={valueT}
-        items={itemsT}
-        setOpen={setOpenT}
-        setValue={setValueT}
-        setItems={setItemsT} 
-      />
-*/
 const styles = StyleSheet.create({
-  select: {
-    backgroundColor: "#10ac84",
-    width: "90%",
-
+  text:{
+    fontWeight: 'bold', 
+    color: theme.colors.text,
+    fontSize:16
   },
-  input: {
-    width: "90%",
-    marginBottom: 7,
-    fontSize: 14,
-    borderWidth: 1,
-    borderColor: "maroon",
-    height: 70,
-    color: "#ffffff",
-    textAlign: "center",
-    padding: 4,
-    borderRadius: 5,
+  multitext: {
+    color: theme.colors.primary,
+    fontSize:14,    
   },
-  buttonSave: {
-    paddingTop: 10,
-    paddingBottom: 10,
-    borderRadius: 5,
-    marginBottom: 3,
-    backgroundColor: "white",
-    width: "90%",
+  container: {
+    width: '85%', 
+    margin: 20,
   },
-  buttonUpdate: {
-    paddingTop: 10,
-    paddingBottom: 10,
-    borderRadius: 5,
-    marginBottom: 3,
-    backgroundColor: "#e58e26",
-    width: "90%",
-  },
-  buttonText: {
-    color: "maroon",
-    textAlign: "center",
-    fontWeight: 'bold'    
-  },
+  multicontainer: {
+    height: 28,
+    marginVertical: 2,
+    backgroundColor: theme.colors.secondary
+  }  
 });
 
 export default OrderFormScreen;

@@ -1,7 +1,8 @@
-const API_O = "http://192.168.193.103:3000/orders";
-const API_T = "http://192.168.193.103:3000/tables";
-const API_D = "http://192.168.193.103:3000/dishes";
-const API_E = "http://192.168.193.103:3000/extras";
+const API_O = "http://192.168.3.13:3000/orders";
+const API_T = "http://192.168.3.13:3000/tables";
+const API_D = "http://192.168.3.13:3000/dishes";
+const API_E = "http://192.168.3.13:3000/extras";
+const API_L = "http://192.168.3.13:3000/login";
 
 //Orders
 export const saveOrder = async (newOrder) => {
@@ -32,12 +33,13 @@ export const getOrders = async () => {
 
 //Tables
 export const getTables = async () => {
-  const res = await fetch(API_D, {
+  const res = await fetch(API_T, {
     method: "GET",
   });
   return await res.json();
 };
 
+//borrar
 export const getTable = async (tableId) => {
   const res = await fetch(`${API_T}/${tableId}`);
   return await res.json();
@@ -55,6 +57,19 @@ export const getDishes = async () => {
 export const getExtras = async () => {
   const res = await fetch(API_E, {
     method: "GET",
+  });
+  return await res.json();
+};
+
+//Login
+export const login = async (data) => {
+  const res = await fetch(API_L, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
   });
   return await res.json();
 };

@@ -1,43 +1,26 @@
 import React from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { getTable } from "../api";
+import { theme } from '../core/theme'
 
 const OrderItem = ({ order, handleDelete }) => {
   const navigation = useNavigation();
-/*  
-  const [table, setTable] = useState({
-    name: ""
-  });  
 
-  const getTableName = async () => {
-    try {
-      const table = await getTable();
-      setTable(table)
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
-  useEffect(() => {
-    getTableName();
-    //console.log("called");
-  }, [isFocused]);
-*/
 
   return (
     <View style={styles.itemContainer}>
       <TouchableOpacity
         onPress={() => navigation.navigate("HomeScreen", { id: order.id })}
       >
-        <Text style={styles.itemTitle}>{order.Id}</Text>
-        <Text style={{ color: "#8395a7" }}>{order.Fecha}</Text>
+        <Text style={styles.itemTitle}>{order.NombreMesa}</Text>
+        <Text style={{ color: theme.colors.text }}>{order.Fecha}</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={{ backgroundColor: "#ee5253", padding: 7, borderRadius: 5 }}
-        onPress={() => handleDelete(order.id)}
+        style={{ backgroundColor: theme.colors.error, padding: 7, borderRadius: 5 }}
+        onPress={() => handleDelete(order.Id)}
       >
-        <Text style={{ color: "#fff" }}>Delete</Text>
+        <Text style={{ color: theme.colors.primary }}>Borrar</Text>
       </TouchableOpacity>
     </View>
   );
@@ -45,7 +28,7 @@ const OrderItem = ({ order, handleDelete }) => {
 
 const styles = StyleSheet.create({
   itemContainer: {
-    backgroundColor: "#333333",
+    backgroundColor: "#FBF3DF",
     padding: 20,
     marginVertical: 8,
     flexDirection: "row",
@@ -54,7 +37,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   itemTitle: {
-    color: "#ffffff",
+    color: theme.colors.text,
   },
 });
 export default OrderItem;

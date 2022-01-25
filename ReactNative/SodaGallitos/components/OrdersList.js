@@ -10,58 +10,11 @@ const OrdersList = ({ navigation }) => {
   const [refreshing, setRefreshing] = React.useState(false);
   const isFocused = useIsFocused();
 
-  const dt = [
-    {
-      "Id": "Mesa #1",
-      "Fecha": "2022-01-09 18:13",
-      "IdMesa": 1,
-      "Estado": 1,
-      "TipoArregloPrecio": null,
-      "ValorArregloPrecio": null,
-      "NotaArregloPrecio": null,
-      "ResponsableCreacion": 1,
-      "Nota": null
-    },
-    {
-      "Id": "Mesa #2",
-      "Fecha": "2022-01-10 10:12",
-      "IdMesa": 1,
-      "Estado": 1,
-      "TipoArregloPrecio": null,
-      "ValorArregloPrecio": null,
-      "NotaArregloPrecio": null,
-      "ResponsableCreacion": 1,
-      "Nota": null
-    },
-    {
-      "Id": "Mesa #4",
-      "Fecha": "2022-01-10 10:14",
-      "IdMesa": 2,
-      "Estado": 1,
-      "TipoArregloPrecio": null,
-      "ValorArregloPrecio": null,
-      "NotaArregloPrecio": null,
-      "ResponsableCreacion": 1,
-      "Nota": "Sin olores                                                                                          "
-    },
-    {
-      "Id": "Mesa Exterior",
-      "Fecha": "2022-01-10 10:37",
-      "IdMesa": 2,
-      "Estado": 1,
-      "TipoArregloPrecio": null,
-      "ValorArregloPrecio": null,
-      "NotaArregloPrecio": null,
-      "ResponsableCreacion": 1,
-      "Nota": "Sin picante                                                                                         "
-    }
-  ]
-
-  const getUsers = async () => {
+  const loadOrders = async () => {
     try {
-      console.log("getUsers");
+      console.log("loadOrders");
       const orders = await getOrders();
-      //setOrders(orders);
+      setOrders(orders);
     } catch (error) {
       console.log(error);
     }
@@ -70,7 +23,7 @@ const OrdersList = ({ navigation }) => {
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     // wait(2000).then(() => setRefreshing(false));
-    await getUsers();
+    await loadOrders();
     setRefreshing(false);
   }, []);
 
@@ -84,15 +37,14 @@ const OrdersList = ({ navigation }) => {
         text: "Ok",
         onPress: async () => {
           await deleteOrder(id);
-          await getUsers();
+          await loadOrders();
         },
       },
     ]);
   };
 
   useEffect(() => {
-    getUsers();
-    console.log("called");
+    loadOrders();
   }, [isFocused]);
 
   const renderItem = ({ item }) => (
@@ -102,7 +54,7 @@ const OrdersList = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, width: "90%" }}>
       <FlatList
-        data={dt}
+        data={orders}
         renderItem={renderItem}
         keyExtractor={(item) => item.Id.toString()}
         refreshControl={

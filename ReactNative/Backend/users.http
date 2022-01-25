@@ -5,6 +5,8 @@
 
 @apiE = http://localhost:3000/extras
 
+@apiL = http://localhost:3000/login
+
 ### Get all orders
 {{api}}
 
@@ -12,19 +14,13 @@
 POST {{api}}
 Content-Type: application/json
 
-{
-  "table": "1",
-  "user": "1",
-  "note": "Sin huevo",
-  "extras": [1],
-  "dishes":[1]
-}
+{"table":"1002","user":"1","extras":[1],"dishes":[1],"note":"Gare"}
 
 ### get a single order
-{{apiT}}/2
+{{api}}/1
 
 ### delete a single order
-DELETE {{api}}/4
+DELETE {{api}}/1003
 
 ### update order
 PUT {{api}}/5

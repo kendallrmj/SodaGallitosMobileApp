@@ -2,6 +2,7 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Text, TouchableOpacity, View } from "react-native";
+import { theme } from './core/theme'
 
 import HomeScreen from "./screens/HomeScreen";
 import OrderFormScreen from "./screens/OrderFormScreen";
@@ -20,16 +21,16 @@ const App = () => {
           options={({ navigation }) => ({
             title: "Ordenes",
             headerStyle: {
-              backgroundColor: "#222f3e",
+              backgroundColor: theme.colors.primary,
             },
             headerTitleStyle: {
-              color: "#ffffff",
+              color: theme.colors.text,
             },
             headerRight: () => (
               <TouchableOpacity
                 onPress={() => navigation.navigate("OrderFormScreen")}
               >
-                <Text style={{ color: "#fff", marginRight: 20, fontSize: 15 }}>
+                <Text style={{ color: theme.colors.secondary, marginRight: 20, fontSize: 15 }}>
                   Nueva Orden
                 </Text>
               </TouchableOpacity>
@@ -42,12 +43,10 @@ const App = () => {
           options={{
             title: 'Crear Orden',
             headerStyle: {
-              backgroundColor: "#222f3e",
+              backgroundColor: theme.colors.primary,
             },
-            headerTintColor: "#fff",
-
             headerTitleStyle: {
-              color: "#ffffff",
+              color: theme.colors.text,
             },
           }}
         />
@@ -56,12 +55,12 @@ const App = () => {
           options={{
             title: 'Inicio',
             headerStyle: {
-              backgroundColor: "#222f3e",
+              backgroundColor: theme.colors.primary,
             },
-            headerTintColor: "#fff",
+            headerTintColor: theme.colors.text,
 
             headerTitleStyle: {
-              color: "#ffffff",
+              color: theme.colors.text,
             },
           }}/>
         <Stack.Screen name="LoginScreen" 
@@ -69,12 +68,12 @@ const App = () => {
         options={{
           title: 'Iniciar sesion',
           headerStyle: {
-            backgroundColor: "#222f3e",
+            backgroundColor: theme.colors.primary,
           },
-          headerTintColor: "#fff",
+          headerTintColor: theme.colors.text,
 
           headerTitleStyle: {
-            color: "#ffffff",
+            color: theme.colors.text,
           },
         }}
         />

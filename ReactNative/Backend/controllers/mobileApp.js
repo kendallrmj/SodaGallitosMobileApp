@@ -19,7 +19,7 @@ export const deleteOrder = async (req, res) =>{
     let pool = await sql.connect(config);
     await pool.request()
         .input('pIdOrder', sql.Int, req.params.id)
-        .execute('deleteOrder')
+        .execute('DeleteOrder')
   } catch (err) {
     console.log("Delete order error: ", err)
   }
@@ -33,35 +33,40 @@ export const saveOrder = async (req, res) => {
         .input('pResponsableCreacion', sql.Int, req.body.user)
         .input('pNota', sql.NVarChar, req.body.note)
         .execute('addOrder')        
-/*
-    var idDishes = [1]
-    var idExtras = [1]
-    var dishes = new sql.Table();
-    var extras = new sql.Table();
-    dishes.columns.add('IdElement', sql.Int);  
-    extras.columns.add('IdElement', sql.Int);
-    idDishes.forEach(function(element, index, array) {
-      dishes.rows.add(element);
-    })
-    idExtras.forEach(function(element, index, array) {
-      extras.rows.add(element);
-    })
+
+
+    var ids={
+      "Adicionales":req.body.extras,
+      "Platillos":req.body.dishes
+    }
+    let data = JSON.stringify(ids);    
     var idOrder=orderResult.recordset[0].Id
     await pool.request()
-        .input('pExtraList',  extras)
-        .input('pDishList', dishes)
+        .input('pExtraAndDishList', sql.NVarChar, data)
         .input('pIdOrder', sql.Int, idOrder)
-        .execute('addDishAndExtraPerOrder')
-    
-    //
-*/    
-    return res.send(200)
+        .execute('addDishAndExtraPerOrder')    
+    return res.json(idOrder)
   }catch (err) {
     console.log("Create order error: ", err)
     return res.sendStatus()
   }
 }
 
+
+//Login
+export const login = async (req, res) => {
+  try {
+    let pool = await sql.connect(config);
+    let result = await pool.request()
+        .input('pUserName', sql.NVarChar, req.body.username)
+        .input('pPassword', sql.NVarChar, req.body.password)
+        .execute('login')
+    return res.json(result.recordset)
+  }catch (err) {
+    console.log("Login error: ", err)
+    return res.sendStatus()
+  }
+}
 
 //tables
 export const getTable = async (req, res) => {

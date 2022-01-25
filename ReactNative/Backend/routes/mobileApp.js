@@ -6,7 +6,8 @@ import {
   getTable,
   getTables,
   getExtras,
-  getDishes
+  getDishes,
+  login
 } from "../controllers/mobileApp.js";
 
 
@@ -23,5 +24,6 @@ router.get("/tables/:id", getTable);
 router.get("/dishes", getDishes);
 //extras
 router.get("/extras", getExtras);
-
+//Login
+router.post("/login",login);
 export default router;
