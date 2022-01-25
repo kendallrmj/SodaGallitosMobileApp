@@ -29,7 +29,7 @@ const OrderFormScreen = ({ navigation, route }) => {
       console.log("getDishes");
       const dishes = await getDishes();
       setDishes(dishes);
-    } catch (error) {
+     } catch (error) {
       console.log(error);
     }
   };  
@@ -57,20 +57,20 @@ const OrderFormScreen = ({ navigation, route }) => {
   const [editing] = useState(false);
 
 
-
-
+  function addExtras(item) {
+    order.extras.push(item.id);
+  }
+  function addDishes(item) {
+    order.dishes.push(item.id);
+  }
+  
   const handleSubmit = async () => {
-    function addExtras(item) {
-      order.extras.push(item.Id);
-    }
-    function addDishes(item) {
-      order.dishes.push(item.Id);
-    }
     try {
       order.table=selectedTable.id.toString();
       selectedDishes.forEach(addDishes);
       selectedExtras.forEach(addExtras);
       order.user = await AsyncStorage.getItem('@id');
+//      console.log(order)
       await saveOrder(order);
       navigation.navigate("HomeScreen");
     } catch (error) {
@@ -81,10 +81,10 @@ const OrderFormScreen = ({ navigation, route }) => {
   const handleChange = (name, value) => setOrder({ ...order, [name]: value });
 
   function onMultiChangeDishes() {
-    return (item) => setSelectedDishes(xorBy(selectedDishes, [item], 'Id'))
+    return (item) => setSelectedDishes(xorBy(selectedDishes, [item], 'id'))
   }
   function onMultiChangeExtras() {
-    return (item) => setSelectedExtras(xorBy(selectedExtras, [item], 'Id'))
+    return (item) => setSelectedExtras(xorBy(selectedExtras, [item], 'id'))
   }
   function onChangeTable() {   
     return (val) => setSelectedTable(val)
@@ -123,12 +123,10 @@ const OrderFormScreen = ({ navigation, route }) => {
         label="Seleccione los platillos"
         labelStyle={{fontWeight: 'bold', color: theme.colors.secondary,fontSize:18,textAlign:"center"}}
         containerStyle={styles.container}
-
         optionContainerStyle={styles.container}
         optionsLabelStyle={styles.text}        
         multiOptionsLabelStyle = {styles.multitext}
-        multiOptionContainerStyle	={styles.multicontainer}
-        
+        multiOptionContainerStyle	={styles.multicontainer}        
         inputFilterContainerStyle={styles.container}
         inputFilterStyle={styles.text}        
         options={dishes}
